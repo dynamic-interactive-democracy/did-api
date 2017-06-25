@@ -1,15 +1,13 @@
-# did-api
+# did-api endpoints
 
-## Endpoints
-
-### Users
+## Users
 
 The primary user data is kept in AlleOS for now.
 These Users-endpoints are used to retrieve and create new user entries in this system, basically *registering that they exist*, rather than creating full profiles.
 
 Creating a user returns an auth token that can be used to act as the user in the system.
 
-#### get (TODO)
+### get (TODO)
 
 Users can be retrieved when authenticated as a user or when authenticated as the integrating brand itself.
 
@@ -32,7 +30,7 @@ will return:
 }
 ```
 
-#### create
+### create
 
 **todo:** Requires brand authentication
 
@@ -124,7 +122,8 @@ returns
             ],
             "contactPerson": {remoteId},
             "fullState": {fullState:lookingForMore|openForMore|full}
-        }
+        },
+        ...
     ]
 }
 ```
@@ -160,7 +159,21 @@ would result in:
 ```
 200 OK
 {
-    // TODO
+    "id": {circleId},
+    "name": {nonempty string},
+    "vision": {string},
+    "mission": {string},
+    "aim": {string},
+    "expectationsForMembers": {expectationsForMembers},
+    "members": [
+        {
+            "id": {remoteId},
+            "email": {email},
+            "invitationState": {invitationState:invited|member}
+        }
+    ],
+    "contactPerson": {remoteId},
+    "fullState": {fullState:lookingForMore|openForMore|full}
 }
 ```
 
@@ -172,4 +185,31 @@ Todo: I am dissatisfied with the name `fullState`. --- Niels A
 
 ### update (TODO)
 
+```
+PUT /circles/{id}
+{
+    "name": {nonempty string},
+    "vision": {string},
+    "mission": {string},
+    "aim": {string},
+    "expectationsForMembers": {expectationsForMembers},
+    "members": [
+        {
+            "id": {remoteId},
+            "email": {email},
+            "invitationState": {invitationState:invited|member}
+        }
+    ],
+    "contactPerson": {remoteId},
+    "fullState": {fullState:lookingForMore|openForMore|full}
+}
+```
 
+results in
+
+```
+200 OK
+```
+
+Fields left out (in Javascript, `undefined`) are not updated.
+To unset a value, the field must be explicitly set to `null`.
