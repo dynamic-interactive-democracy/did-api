@@ -1,0 +1,23 @@
+{
+  "name": "did-api",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node start.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dynamic-interactive-democracy/did-api.git"
+  },
+  "author": "did dev team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dynamic-interactive-democracy/did-api/issues"
+  },
+  "homepage": "https://github.com/dynamic-interactive-democracy/did-api#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
