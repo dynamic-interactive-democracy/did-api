@@ -1,5 +1,10 @@
 # did-api
 
+## Authentication
+Authentication is performed with the Basic Authentication Scheme ([RFC2617 Section 2](https://tools.ietf.org/html/rfc2617#section-2)).
+
+`userid` refers to the `id` provided upon user creation, and `password` refers to the token returned from user creation.
+
 ## Endpoints
 
 ### Users
