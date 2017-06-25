@@ -19,6 +19,7 @@
   "homepage": "https://github.com/dynamic-interactive-democracy/did-api#readme",
   "dependencies": {
     "async": "^2.4.1",
+    "basic-auth": "^1.1.0",
     "body-parser": "^1.17.2",
     "bunyan": "^1.8.10",
     "config": "^1.26.1",

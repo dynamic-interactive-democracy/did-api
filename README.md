@@ -8,7 +8,13 @@
 6. All steps of topic in cirlce (plugin)
 7. ...
 
-# did-api endpoints
+# did-api endpoints/docs
+
+## Authentication
+
+Authentication is performed with the Basic Authentication Scheme ([RFC2617 Section 2](https://tools.ietf.org/html/rfc2617#section-2)).
+
+`userid` refers to the `id` provided upon user creation, and `password` refers to the token returned from user creation.
 
 ## Users
 
@@ -40,6 +46,22 @@ will return:
 }
 ```
 
+### get current user
+To retrieve information about the authenticated user:
+
+```
+GET /user
+Authorization: Basic `base64(id:token)`
+```
+
+Will return:
+```
+{
+    id: {id},
+    name: {name}
+}
+```
+
 ### create
 
 **todo:** Requires brand authentication
@@ -62,12 +84,11 @@ Will return:
     "status": "User created",
     "user": {
         "token": {64 char token},
-        "userId": {id},
+        "id": {userId},
         "name": {name}
     }
 }
 ```
-
 
 Creating multiple users:
 ```
