@@ -16,10 +16,36 @@ Authentication is performed with the Basic Authentication Scheme ([RFC2617 Secti
 
 `userid` refers to the `id` provided upon user creation, and `password` refers to the token returned from user creation.
 
-## Users
+
+## Data structures
+
+### Users
 
 The primary user data is kept in AlleOS for now.
 These Users-endpoints are used to retrieve and create new user entries in this system, basically *registering that they exist*, rather than creating full profiles.
+
+
+
+
+## Endpoints
+
+### User
+
+#### get current user
+```
+GET /user
+Authorization: Basic `base64(id:token)`
+```
+
+Will return:
+```
+{
+    id: {id},
+    name: {name}
+}
+```
+
+### Users
 
 Creating a user returns an auth token that can be used to act as the user in the system.
 
@@ -79,7 +105,7 @@ POST /users
 Will return:
 
 ```
-200 OK
+201 CREATED
 {
     "status": "User created",
     "user": {
@@ -119,23 +145,100 @@ Will return:
 }
 ```
 
-## Circles (TODO)
 
-Cirlces are groups of users that interact in a sociocratic manner.
+### Circles (TODO)
+Circles are groups of users that interact in a sociocratic manner.
 
 These endpoints require user authentication.
 
 TODO: Procedures (strings) should also be settable on the circle.
 
-### get all
+#### create
 
+Creating a circle:
+```
+
+POST /circles
+Authorization: Basic `base64(id:token)`
+{
+    "name": {nonempty string},
+    "vision": {string},
+    "mission": {string},
+    "aim": {string},
+    "fullState": {fullState:lookingForMore|openForMore|full}
+}
+```
+TODO: I am dissatisfied with the name `fullState`. --- Niels A
+
+Will return:
+
+```
+201 CREATED
+{
+    "status": "Circle created",
+    "circle": {
+        "id": {uuid},
+        "name": {name},
+        "vision": {vision},
+        "mission": {mission},
+        "aim": {aim},
+        "expectationsForMembers": [],
+        "members": [
+            {
+                "id": {id},
+                "invitationState": "member"
+            }
+        ],
+        "contactPerson": {id},
+        "fullState": "lookingForMore"
+    }
+}
+```
+
+Note: contact person starts as the creating user and as the sole member.
+Only id OR email is present.
+For members that are in invitationState `member` the `id` is present, not the `email`.
+
+#TODO: accept/reject membership
+#TODO: When a circle is created some standard roles are also defined.
+
+
+#### update (TODO)
+
+```
+PUT /circles/{id}
+{
+    "name": {nonempty string},
+    "vision": {string},
+    "mission": {string},
+    "aim": {string},
+    "expectationsForMembers": {expectationsForMembers},
+    "members": [
+        {
+            "id": {userId},
+            "email": {email},
+            "invitationState": {invitationState:invited|member}
+        }
+    ],
+    "contactPerson": {userId},
+    "fullState": {fullState:lookingForMore|openForMore|full}
+```
+
+Fields left out (in Javascript, `undefined`) are not updated.
+To unset a value, the field must be explicitly set to `null`.
+
+
+#### get all circles
+
+Viewing all circles:
 ```
 GET /circles
+Authorization: Basic `base64(id:token)`
 ```
 
-returns
-
+will return:
 ```
+200 OK
 {
     "circles": [
         {
@@ -161,83 +264,34 @@ returns
 }
 ```
 
-Only id OR email is present.
-For members that are in invitationState `member` the `id` is present, not the `email`.
+#### get a circle
 
-**TODO**: accept/reject membership
-
-### create (TODO)
-
+Viewing a circle:
 ```
-POST /circles
-{
-    "name": {nonempty string},
-    "vision": {string},
-    "mission": {string},
-    "aim": {string},
-    "expectationsForMembers": {expectationsForMembers},
-    "members": [
-        {
-            "id": {id},
-            "email": {email}
-        },
-        ...
-    ],
-    "fullState": {fullState:lookingForMore|openForMore|full}
-}
+GET /circles/:id
+Authorization: Basic `base64(id:token)`
 ```
 
-would result in:
-
+will return:
 ```
 200 OK
 {
-    "id": {circleId},
-    "name": {nonempty string},
-    "vision": {string},
-    "mission": {string},
-    "aim": {string},
-    "expectationsForMembers": {expectationsForMembers},
-    "members": [
+    "circle": {
+        "id": {uuid},
+        "name": {name},
+        "vision": {vision},
+        "mission": {mission},
+        "aim": {aim},
+        "expectationsForMembers": [],
+        "members": [
         {
-            "id": {userId},
-            "email": {email},
-            "invitationState": {invitationState:invited|member}
+            "id": {id},
+            "invitationState": "member"
         }
-    ],
-    "contactPerson": {userId},
-    "fullState": {fullState:lookingForMore|openForMore|full}
-}
-```
-
-Note that for members only id OR email should be present.
-
-Note: contact person starts as the creating user.
-
-Todo: I am dissatisfied with the name `fullState`. --- Niels A
-
-Todo: When a circle is created some standard roles are also defined.
-(Yet to be specified.)
-
-### update (TODO)
-
-```
-PUT /circles/{id}
-{
-    "name": {nonempty string},
-    "vision": {string},
-    "mission": {string},
-    "aim": {string},
-    "expectationsForMembers": {expectationsForMembers},
-    "members": [
-        {
-            "id": {userId},
-            "email": {email},
-            "invitationState": {invitationState:invited|member}
-        }
-    ],
-    "contactPerson": {userId},
-    "fullState": {fullState:lookingForMore|openForMore|full}
+        ],
+        "contactPerson": {id},
+        "fullState": "lookingForMore"
+    }
 }
 ```
 
@@ -247,8 +301,6 @@ results in
 200 OK
 ```
 
-Fields left out (in Javascript, `undefined`) are not updated.
-To unset a value, the field must be explicitly set to `null`.
 
 ## Role (TODO)
 
@@ -361,7 +413,7 @@ Todo: They may be tied to circles, topics or agreements.
 GET /circle/{id}/tasks
 ```
 
-results in 
+results in
 
 ```
 200 OK
