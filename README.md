@@ -22,7 +22,7 @@ will return:
 {
     "users:" [
         {
-            "remoteId": {id},
+            "userId": {id},
             "name": {name}
         },
         ...
@@ -52,7 +52,7 @@ Will return:
     "status": "User created",
     "user": {
         "token": {64 char token},
-        "remoteId": {id},
+        "userId": {id},
         "name": {name}
     }
 }
@@ -80,7 +80,7 @@ Will return:
     "users": [
         {
             "token": {64 char token},
-            "remoteId": {id},
+            "userId": {id},
             "name": {name}
         },
         ...
@@ -116,13 +116,13 @@ returns
             "expectationsForMembers": {expectationsForMembers},
             "members": [
                 {
-                    "id": {remoteId},
+                    "id": {userId},
                     "email": {email},
                     "invitationState": {invitationState:invited|member}
                 },
                 ...
             ],
-            "contactPerson": {remoteId},
+            "contactPerson": {userId},
             "fullState": {fullState:lookingForMore|openForMore|full}
         },
         ...
@@ -169,12 +169,12 @@ would result in:
     "expectationsForMembers": {expectationsForMembers},
     "members": [
         {
-            "id": {remoteId},
+            "id": {userId},
             "email": {email},
             "invitationState": {invitationState:invited|member}
         }
     ],
-    "contactPerson": {remoteId},
+    "contactPerson": {userId},
     "fullState": {fullState:lookingForMore|openForMore|full}
 }
 ```
@@ -200,12 +200,12 @@ PUT /circles/{id}
     "expectationsForMembers": {expectationsForMembers},
     "members": [
         {
-            "id": {remoteId},
+            "id": {userId},
             "email": {email},
             "invitationState": {invitationState:invited|member}
         }
     ],
-    "contactPerson": {remoteId},
+    "contactPerson": {userId},
     "fullState": {fullState:lookingForMore|openForMore|full}
 }
 ```
@@ -241,8 +241,8 @@ will result in:
 {
     "roles": [
         {
-            "id": {id},
-            "person": {remoteId},
+            "id": {roleId},
+            "person": {userId},
             "effects": [
                 "notifiedOfUpcomingDeadlines",
                 "notifiedOfRequestedAgendaPoints",
@@ -275,13 +275,13 @@ will result in:
                 {
                     "nominations": [
                         {
-                            "nominator": {remoteId},
-                            "nominee": {remoteId},
-                            "changeRoundNominee": {remoteId}
+                            "nominator": {userId},
+                            "nominee": {userId},
+                            "changeRoundNominee": {userId}
                         },
                         ...
                     ],
-                    "electee": {remoteId},
+                    "electee": {userId},
                     "summary": {string},
                     "term": {
                         "start": {termStartDate},
@@ -305,7 +305,10 @@ Todo: Request evaluation of role.
 
 Todo: Submit evaluation
 
-Todo: Start/finish election
+Todo: Start/finish election.
+Current person is updated once the next term starts.
+**OR** maybe we don't need to show the current `person` at all?
+It is a derived field (from `elections`).
 
 ### create (TODO)
 
@@ -314,3 +317,53 @@ Todo: ...
 ### edit (TODO)
 
 Todo: ...
+
+## Tasks (TODO)
+
+Tasks are work units that have been agreed upon in a circle.
+
+Todo: They may be tied to circles, topics or agreements.
+
+### get (TODO)
+
+```
+GET /circle/{id}/tasks
+```
+
+results in 
+
+```
+200 OK
+{
+    "tasks": [
+        {
+            "title": {string},
+            "owner": {userId},
+            "dueDate": {date},
+            "description": {string},
+            "aim": {string},
+            "status": {status:behindSchedule|onSchedule|aheadOfSchedule},
+            "attachments: [
+                { objectStoredAttachment }
+            ]
+        },
+        ...
+    ]
+}
+```
+
+When a `dueDate` is coming up (default 1 month before), roles with `notifiedOfUpcomingDeadlines` receive an email on this.
+
+Todo: attachments
+
+### create (TODO)
+
+...
+
+### update (TODO)
+
+...
+
+## Topics (TODO)
+
+
