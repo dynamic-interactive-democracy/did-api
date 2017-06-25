@@ -1,3 +1,13 @@
+# did-api PRIO TODO
+
+1. Circles in API
+2. Topics in API
+3. Convert team to circle in AlleOS (API)
+4. Create circle in AlleOS (plugin)
+5. Create topic in circle (plugin)
+6. All steps of topic in cirlce (plugin)
+7. ...
+
 # did-api endpoints
 
 ## Users
@@ -20,7 +30,7 @@ will return:
 ```
 200 OK
 {
-    "users:" [
+    "users": [
         {
             "userId": {id},
             "name": {name}
@@ -381,13 +391,6 @@ results in
             "owner": {userId},
             "why": {string},
             "presentAtDecisionMaking": [ {id}, ... ],
-            "missingAtDecisionMaking": [
-                {
-                    "id": {userId},
-                    "state": {state:missing|approved|complained},
-                    "complaint": {string}
-                }
-            ],
             "attachments": [
                 { objectStoredAttachment },
                 ...
@@ -441,17 +444,62 @@ There is also an option to go back to the picture forming stage (all the data is
 In the agreement stage, a summary of all the stage decisions is shown.
 
 The members present at decision making are entered in the decision making stage.
+
+### create (TODO)
+
+...
+
+### update (TODO)
+
+...
+
+## Agreements (TODO)
+
+```
+GET /circles/{id}/agreements
+```
+
+would return
+
+```
+200 OK
+{
+    "agreements": [
+        {
+            "title": {string},
+            "description": {string},
+            "presentAtDecisionMaking": [ {userId}, ... ],
+            "missingAtDecisionMaking": [
+                {
+                    "id": {userId},
+                    "state": {state:missing|approved|complained},
+                    "complaint": {string}
+                }
+            ],
+            "term": {
+                "start": {termStartDate},
+                "end": {termEndDate}
+            },
+            "notes": {string}
+        },
+        ...
+    ]
+}
+```
+
 The members missing are automatically calculated from the members in the circle at the time.
 The missing members can later approve of the agreement, or complain (with a written reason), which notifies the facilitator (TODO).
 
-***create (TODO)***
+Todo: missing member complains
+
+Todo: notify facilitator to put on agenda
+
+Todo: when end date nears, bring on agenda (notify facilitator)
+
+### create (TODO)
 
 ...
 
-***update (TODO)***
+### update (TODO)
 
 ...
-
-**Agreements (TODO)**
-
-
