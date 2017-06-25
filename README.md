@@ -343,7 +343,7 @@ results in
             "description": {string},
             "aim": {string},
             "status": {status:behindSchedule|onSchedule|aheadOfSchedule},
-            "attachments: [
+            "attachments": [
                 { objectStoredAttachment }
             ]
         },
@@ -365,5 +365,93 @@ Todo: attachments
 ...
 
 ## Topics (TODO)
+
+```
+GET /circles/{id}/topics
+```
+
+results in
+
+```
+200 OK
+{
+    "topics": [
+        {
+            "title": {string},
+            "owner": {userId},
+            "why": {string},
+            "presentAtDecisionMaking": [ {id}, ... ],
+            "missingAtDecisionMaking": [
+                {
+                    "id": {userId},
+                    "state": {state:missing|approved|complained},
+                    "complaint": {string}
+                }
+            ],
+            "attachments": [
+                { objectStoredAttachment },
+                ...
+            ],
+            "comments": [
+                {
+                    "owner": {userId},
+                    "content": {string},
+                    "timestamp": {timestamp}
+                },
+                ...
+            ],
+            "stage": {stage:exploration|pictureForming|proposalShaping|decisionMaking|agreement},
+            "finalProposals": [
+                {
+                    "id": {proposalId},
+                    "responsible": {userId},
+                    "title": {string},
+                    "aim": {string},
+                    "term": {
+                        "termStartDate": {termStartDate},
+                        "termEndDate": {termEndDate}
+                    },
+                    "attachments": [
+                        { objectStoredAttachment },
+                        ...
+                    ],
+                    "relatedAgreement": {relatedAgreementId}
+                },
+                ...
+            ]
+        },
+        ...
+    ]
+}
+```
+
+Todo: request adding to agenda notifies facilitator
+
+Final proposals are entered in the proposal shaping stage (null before), and locked after.
+
+If everybody agrees on a proposal (action button), an agreement is created.
+
+If the proposal is subsequently changed, the agreement should be deleted.
+
+Once the proposals have all been agreed to, the topic is archived and cannot be changed again.
+
+When not everybody agrees on a proposal, a help text is shown.
+There is also an option to go back to the picture forming stage (all the data is kept).
+
+In the agreement stage, a summary of all the stage decisions is shown.
+
+The members present at decision making are entered in the decision making stage.
+The members missing are automatically calculated from the members in the circle at the time.
+The missing members can later approve of the agreement, or complain (with a written reason), which notifies the facilitator (TODO).
+
+***create (TODO)***
+
+...
+
+***update (TODO)***
+
+...
+
+**Agreements (TODO)**
 
 
