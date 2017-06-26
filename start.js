@@ -7,6 +7,7 @@ const Pool = require("pg-pool");
 const canary = require("./lib/canary");
 const user = require("./lib/user/app");
 const users = require("./lib/users/app");
+const circles = require("./lib/circles/app");
 
 let log = bunyan.createLogger({ name: package.name });
 let pgdb = new Pool(config.postgres);
@@ -20,5 +21,6 @@ app.use((req, res, next) => {
 app.use("/canary", canary(pgdb));
 app.use("/user", user(log, pgdb));
 app.use("/users", users(log, pgdb));
+app.use("/circles", circles(log, pgdb));
 
 app.listen(3000);
