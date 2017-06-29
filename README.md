@@ -8,6 +8,8 @@
 6. All steps of topic in cirlce (plugin)
 7. ...
 
+TODO: Figure out how to handle people invited by email address
+
 # did-api endpoints/docs
 
 ## Authentication
@@ -168,7 +170,8 @@ Authorization: Basic `base64(id:token)`
     "vision": {string},
     "mission": {string},
     "aim": {string},
-    "fullState": {fullState:lookingForMore|openForMore|full}
+    "fullState": {fullState:lookingForMore|openForMore|full},
+    "invited": [{userId}, ...]
 }
 ```
 
@@ -185,12 +188,8 @@ Will return:
         "mission": {mission},
         "aim": {aim},
         "expectationsForMembers": [],
-        "members": [
-            {
-                "id": {id},
-                "invitationState": "member"
-            }
-        ],
+        "members": [{userId}],
+        "invited": [{userId}, ...]
         "contactPerson": {id},
         "fullState": "lookingForMore"
     }
@@ -205,7 +204,7 @@ For members that are in invitationState `member` the `id` is present, not the `e
 #### update
 
 ```
-PUT /circles/{id}
+PUT /circles/:circleId
 {
     "name": {nonempty string},
     "vision": {string},
@@ -240,14 +239,8 @@ will return:
             "mission": {string},
             "aim": {string},
             "expectationsForMembers": {expectationsForMembers},
-            "members": [
-                {
-                    "id": {userId},
-                    "email": {email},
-                    "invitationState": {invitationState:invited|member}
-                },
-                ...
-            ],
+            "members": [{userId}, ...],
+            "invited": [{userId}, ...]
             "contactPerson": {userId},
             "fullState": {fullState:lookingForMore|openForMore|full}
         },
@@ -260,7 +253,7 @@ will return:
 
 Viewing a circle:
 ```
-GET /circles/:id
+GET /circles/:circleId
 Authorization: Basic `base64(id:token)`
 ```
 
@@ -276,13 +269,8 @@ will return:
         "mission": {mission},
         "aim": {aim},
         "expectationsForMembers": [],
-        "members": [
-            {
-                "id": {id},
-                "invitationState": "member"
-            },
-            ...
-        ],
+        "members": [{userId}, ...],
+        "invited": [{userId}, ...]
         "contactPerson": {id},
         "fullState": "lookingForMore"
     }
@@ -294,7 +282,7 @@ will return:
 Deleting a circle:
 
 ```
-DELETE /circles/:id
+DELETE /circles/:circleId
 Authorization: Basic `base64(id:token)`
 ```
 
@@ -304,6 +292,53 @@ will return:
 204 OK
 ```
 
+
+#### Invite a member
+A member can be invited:
+
+```
+POST /circles/:circleId/members
+Authorization: Basic `base64(id:token)`
+{
+    userId: {userId}
+}
+```
+
+this will result in:
+
+```
+204 NO CONTENT
+```
+
+### Accept invitation
+A member can accept a pending invitation. Only the member who was invited can accept.
+
+```
+POST /circles/:circleId/members/accept
+Authorization: Basic `base64(id:token)`
+```
+
+this will result in:
+
+```
+204 NO CONTENT
+```
+
+### Remove user
+A member can be removed by:
+
+```
+DELETE /circles/:circleId/members/:userId
+Authorization: Basic `base64(id:token)`
+```
+
+this will result in:
+
+```
+204 NO CONTENT
+```
+
+If the user is only invited and not a member, it will also be removed.
 
 ## Role (TODO)
 
