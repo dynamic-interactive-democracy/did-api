@@ -146,12 +146,15 @@ Will return:
 ```
 
 
-### Circles (TODO)
+### Circles
 Circles are groups of users that interact in a sociocratic manner.
-
 These endpoints require user authentication.
 
-TODO: Procedures (strings) should also be settable on the circle.
+#TODO: add/remove member
+#TODO: accept/reject membership
+#TODO: When a circle is created some standard roles are also defined.
+#TODO: Procedures (strings) should also be settable on the circle.
+#TODO: I am dissatisfied with the name `fullState`. --- Niels A
 
 #### create
 
@@ -168,7 +171,6 @@ Authorization: Basic `base64(id:token)`
     "fullState": {fullState:lookingForMore|openForMore|full}
 }
 ```
-TODO: I am dissatisfied with the name `fullState`. --- Niels A
 
 Will return:
 
@@ -199,11 +201,8 @@ Note: contact person starts as the creating user and as the sole member.
 Only id OR email is present.
 For members that are in invitationState `member` the `id` is present, not the `email`.
 
-#TODO: accept/reject membership
-#TODO: When a circle is created some standard roles are also defined.
 
-
-#### update (TODO)
+#### update
 
 ```
 PUT /circles/{id}
@@ -212,16 +211,9 @@ PUT /circles/{id}
     "vision": {string},
     "mission": {string},
     "aim": {string},
-    "expectationsForMembers": {expectationsForMembers},
-    "members": [
-        {
-            "id": {userId},
-            "email": {email},
-            "invitationState": {invitationState:invited|member}
-        }
-    ],
     "contactPerson": {userId},
     "fullState": {fullState:lookingForMore|openForMore|full}
+}
 ```
 
 Fields left out (in Javascript, `undefined`) are not updated.
@@ -273,6 +265,7 @@ Authorization: Basic `base64(id:token)`
 ```
 
 will return:
+
 ```
 200 OK
 {
@@ -284,10 +277,11 @@ will return:
         "aim": {aim},
         "expectationsForMembers": [],
         "members": [
-        {
-            "id": {id},
-            "invitationState": "member"
-        }
+            {
+                "id": {id},
+                "invitationState": "member"
+            },
+            ...
         ],
         "contactPerson": {id},
         "fullState": "lookingForMore"
@@ -295,10 +289,19 @@ will return:
 }
 ```
 
-results in
+
+#### delete a circle
+Deleting a circle:
 
 ```
-200 OK
+DELETE /circles/:id
+Authorization: Basic `base64(id:token)`
+```
+
+will return:
+
+```
+204 OK
 ```
 
 
