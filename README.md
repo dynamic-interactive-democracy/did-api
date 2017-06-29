@@ -8,6 +8,8 @@
 6. All steps of topic in cirlce (plugin)
 7. ...
 
+TODO: Figure out how to handle people invited by email address
+
 # did-api endpoints/docs
 
 ## Authentication
