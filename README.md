@@ -324,7 +324,7 @@ this will result in:
 204 NO CONTENT
 ```
 
-### Remove member
+### Remove user
 A member can be removed by:
 
 ```
@@ -337,6 +337,8 @@ this will result in:
 ```
 204 NO CONTENT
 ```
+
+If the user is only invited and not a member, it will also be removed.
 
 ## Role (TODO)
 
