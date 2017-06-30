@@ -614,3 +614,33 @@ Todo: when end date nears, bring on agenda (notify facilitator)
 ### update (TODO)
 
 ...
+
+# TODO
+
+- Deleting things needs to be supported
+- Default creations should be listed in documentation and supported in functionality. Eg.:
+  - Which roles are created per default in a circle?
+    What effects are tied to them?
+  - What are the default texts set in roles, circles, etc. on creation?
+- Cirlces need the following fields, which are not set on creation (they start with default values), but can be changed afterwards.
+  All are strings.
+  - role election procedure
+  - role evaluation procedure
+  - task meeting procedure
+  - topic exploration stage procedure
+  - topic picture forming stage procedure
+  - topic proposal shaping stage procedure
+  - topic decisions making stage procedure
+  - topic agreement stage procedure
+  - agreement evaluation procedure
+
+## later
+
+These points on the TODO are deliberately deferred for now.
+
+- Circle: wants to interact with other circles?
+- Task: create clone
+- Task: subscription (add self as subscriber or unsubscribe; get updates on change)
+- Topic/Agreement: create linked task (see OPEN\_DESIGN\_DECISIONS.md for more)
+- Overview boards (see OPEN\_DESIGN\_DECISIONS.md for more)
+- Field with "expected time to spend on this item" for each of the items (tasks, topics, agreements), used when creating an agenda.
