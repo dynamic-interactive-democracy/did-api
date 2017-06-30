@@ -42,7 +42,7 @@ Authorization: Basic `base64(id:token)`
 Will return:
 ```
 {
-    id: {id},
+    userId: {userId},
     name: {name}
 }
 ```
@@ -66,7 +66,7 @@ will return:
 {
     "users": [
         {
-            "userId": {id},
+            "userId": {userId},
             "name": {name}
         },
         ...
@@ -85,7 +85,7 @@ Authorization: Basic `base64(id:token)`
 Will return:
 ```
 {
-    id: {id},
+    userId: {userId},
     name: {name}
 }
 ```
@@ -99,7 +99,7 @@ Creating single user:
 ```
 POST /users
 {
-    "id": {id},
+    "userId": {userId},
     "name": {name}
 }
 ```
@@ -112,7 +112,7 @@ Will return:
     "status": "User created",
     "user": {
         "token": {64 char token},
-        "id": {userId},
+        "userId": {userId},
         "name": {name}
     }
 }
@@ -123,7 +123,7 @@ Creating multiple users:
 POST /users
 [
     {
-        "id": {id},
+        "userId": {userId},
         "name": {name}
     },
     ...
@@ -139,7 +139,7 @@ Will return:
     "users": [
         {
             "token": {64 char token},
-            "userId": {id},
+            "userId": {userId},
             "name": {name}
         },
         ...
@@ -182,7 +182,7 @@ Will return:
 {
     "status": "Circle created",
     "circle": {
-        "id": {uuid},
+        "circleId": {uuid},
         "name": {name},
         "vision": {vision},
         "mission": {mission},
@@ -190,7 +190,7 @@ Will return:
         "expectationsForMembers": [],
         "members": [{userId}],
         "invited": [{userId}, ...]
-        "contactPerson": {id},
+        "contactPerson": {userId},
         "fullState": "lookingForMore"
     }
 }
@@ -233,7 +233,7 @@ will return:
 {
     "circles": [
         {
-            "id": {circleId},
+            "circleId": {circleId},
             "name": {nonempty string},
             "vision": {string},
             "mission": {string},
@@ -263,7 +263,7 @@ will return:
 200 OK
 {
     "circle": {
-        "id": {uuid},
+        "circleId": {uuid},
         "name": {name},
         "vision": {vision},
         "mission": {mission},
@@ -271,7 +271,7 @@ will return:
         "expectationsForMembers": [],
         "members": [{userId}, ...],
         "invited": [{userId}, ...]
-        "contactPerson": {id},
+        "contactPerson": {userId},
         "fullState": "lookingForMore"
     }
 }

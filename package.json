@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node start.js | node_modules/.bin/bunyan -o short"
+    "test": "cucumberjs",
+    "start": "node bin/start.js | node_modules/.bin/bunyan -o short"
   },
   "repository": {
     "type": "git",
@@ -29,5 +29,8 @@
     "pg": "^6.4.0",
     "pg-pool": "^1.8.0",
     "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "cucumber": "^2.3.1"
   }
 }
