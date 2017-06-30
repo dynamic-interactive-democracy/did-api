@@ -18,9 +18,18 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Authorization");
+    next();
+});
+
 app.use("/canary", canary(pgdb));
 app.use("/user", user(log, pgdb));
 app.use("/users", users(log, pgdb));
 app.use("/circles", circles(log, pgdb));
 
-app.listen(3000);
+let port = process.argv[2] || 3000;
+app.listen(port);
+
+log.info("did-api v." + package.version + " started on port " + port);
