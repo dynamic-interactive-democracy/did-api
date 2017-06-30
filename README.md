@@ -50,7 +50,7 @@ Will return:
 
 Creating a user returns an auth token that can be used to act as the user in the system.
 
-### get (TODO)
+### get
 
 Users can be retrieved when authenticated as a user or when authenticated as the integrating brand itself.
 
