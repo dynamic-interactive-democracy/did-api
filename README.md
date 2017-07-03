@@ -18,6 +18,8 @@ Authentication is performed with the Basic Authentication Scheme ([RFC2617 Secti
 
 `userid` refers to the `id` provided upon user creation, and `password` refers to the token returned from user creation.
 
+The header `Authorization: Basic {base64(id:token)}` is sent as authentication.
+That is, a string constructed of the id, the character `:`, then the token, all encoded as base 64.
 
 ## Data structures
 
@@ -25,9 +27,6 @@ Authentication is performed with the Basic Authentication Scheme ([RFC2617 Secti
 
 The primary user data is kept in AlleOS for now.
 These Users-endpoints are used to retrieve and create new user entries in this system, basically *registering that they exist*, rather than creating full profiles.
-
-
-
 
 ## Endpoints
 
@@ -51,7 +50,7 @@ Will return:
 
 Creating a user returns an auth token that can be used to act as the user in the system.
 
-### get (TODO)
+### get
 
 Users can be retrieved when authenticated as a user or when authenticated as the integrating brand itself.
 
