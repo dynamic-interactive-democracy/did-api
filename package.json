@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "cucumberjs",
-    "start": "node bin/start.js | node_modules/.bin/bunyan -o short"
+    "start": "node bin/start.js | bunyan -o short"
   },
   "repository": {
     "type": "git",
