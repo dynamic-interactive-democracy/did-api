@@ -248,6 +248,15 @@ will return:
 }
 ```
 
+If called with either of the flags `onlyInvitedTo` and `onlyMemberOf`, the results will be limited. Eg.:
+
+```
+GET /circles?onlyMemberOf
+Authorization: Basic `base64(id:token)`
+```
+
+.. will result only in circles the authenticated user is member of.
+
 #### get a circle
 
 Viewing a circle:

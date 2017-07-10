@@ -7,5 +7,3 @@ CREATE TABLE IF NOT EXISTS circles
     created_at timestamp without time zone DEFAULT NOW(),
     PRIMARY KEY (id)
 );
-
-CREATE UNIQUE INDEX IF NOT EXISTS circle_data_name_idx ON circles((data->>'name'));
