@@ -1,0 +1,10 @@
+- Define (Round/pop-up) or review area of responsibility & tasks.
+- Define (Round/pop-up) or review desired characteristics of role-owner.
+- Decide term (propose, quick reactions, consent/object).
+- Take a moments silence for each member to write down, who they nominate.
+- Add results into the table, when everybody is ready.
+- Nomination-round: Each member shares who they nominated and why (referring back to qualifications).
+- Change-round: each member shares their (changed) nomination and what led them to change or stay with their nomination. 
+- Add results to table
+- Facilitator proposes a person for the role (or appoints someone to make a proposal)
+- Consent-round.

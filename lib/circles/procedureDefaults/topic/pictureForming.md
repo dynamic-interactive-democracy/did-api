@@ -1,0 +1,7 @@
+- Round/pop-up/brainstorm: Identify needs, drivers and intentions by answering questions in column 1 of the helping board for policy creation
+- Round/pop-up/brainstorm: Aims of the policy is defined in the second column.
+- Note the aims in the designated field.
+- Round/pop-up/brainstorm: Identify the dimensions that is needed to be taken into consideration, by using the questions in column 3 of the heping board.
+- Group the cards into separate columns by drag/dropping them as you go along.
+- Create a headline (picture) for each group
+- Note the pictures in the designated field and go to proposal shaping

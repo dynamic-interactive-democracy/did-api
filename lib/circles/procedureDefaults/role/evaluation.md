@@ -1,0 +1,4 @@
+- Facilitator reads area of responsibility.
+- Round: Role owner shares perception on what's worked and what needs improvement.
+- Every member of the group adds what's not already been said.
+- Quick reactions from role owner. 
