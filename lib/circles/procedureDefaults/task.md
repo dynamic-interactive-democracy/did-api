@@ -1,0 +1,4 @@
+- Report from task owner
+- Round/pop-up: Feed-back/evaluation
+- Planning further action
+- (Create new task if new tasks arises or policy cards if principles needs to be discussed)

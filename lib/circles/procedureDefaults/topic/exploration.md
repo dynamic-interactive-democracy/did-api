@@ -1,0 +1,5 @@
+- Have the “bell activator” share why a policy/agreement is needed on this topic
+- Round/pop-up: Clarifying questions
+- Round: Quick reactions
+- Round: Consent A policy/agreement is needed
+- Move card into picture-forming stage

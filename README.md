@@ -630,17 +630,6 @@ Todo: when end date nears, bring on agenda (notify facilitator)
   - Which roles are created per default in a circle?
     What effects are tied to them?
   - What are the default texts set in roles, circles, etc. on creation?
-- Cirlces need the following fields, which are not set on creation (they start with default values), but can be changed afterwards.
-  All are strings.
-  - role election procedure
-  - role evaluation procedure
-  - task meeting procedure
-  - topic exploration stage procedure
-  - topic picture forming stage procedure
-  - topic proposal shaping stage procedure
-  - topic decisions making stage procedure
-  - topic agreement stage procedure
-  - agreement evaluation procedure
 
 ## later
 
