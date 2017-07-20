@@ -59,8 +59,10 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     When(/^I request the topic called "(.*)"$/, function(title, callback) {
+        const topicId = title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+
         request.get({
-            url: `${this.url}/circles/${this.circle.circleId}/topics/${title}`,
+            url: `${this.url}/circles/${this.circle.circleId}/topics/${topicId}`,
             json: true,
             auth: {
                 user: this.userId,
@@ -93,8 +95,10 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     When(/^I delete the topic called "(.*)"$/, function(title, callback) {
+        const topicId = title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+
         request.delete({
-            url: `${this.url}/circles/${this.circle.circleId}/topics/${title}`,
+            url: `${this.url}/circles/${this.circle.circleId}/topics/${topicId}`,
             json: true,
             auth: {
                 user: this.userId,
@@ -110,8 +114,10 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     When(/^I update the topic called "(.*)"$/, function(title, callback) {
+        const topicId = title.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+
         request.put({
-            url: `${this.url}/circles/${this.circle.circleId}/topics/${title}`,
+            url: `${this.url}/circles/${this.circle.circleId}/topics/${topicId}`,
             body: this.topic,
             json: true,
             auth: {
