@@ -18,6 +18,28 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         callback();
     });
 
+    Given(/^I have a users token$/, function(callback) {
+        this.userName = "Donald Duck";
+        this.userId = uuid.v4();
+
+        request.post({
+            url: `${this.url}/users`,
+            body: {
+                name: this.userName,
+                userId: this.userId
+            },
+            json: true
+        }, (error, response, body) => {
+            if(error) return callback(error);
+
+            if(response.statusCode !== 201) throw new Error(`HTTP code was ${response.statusCode} but expected 201: ${JSON.stringify(body)}`);
+
+            this.token = body.user.token;
+
+            callback();
+        });
+    });
+
     When(/^I create a user$/, function(callback) {
         request.post({
             url: `${this.url}/users`,

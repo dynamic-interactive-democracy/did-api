@@ -506,6 +506,8 @@ results in
 {
     "topics": [
         {
+            "topicId": {string},
+            "canonicalTopicId": {circleId}-{topicId},
             "title": {string},
             "owner": {userId},
             "why": {string},

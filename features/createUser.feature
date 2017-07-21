@@ -7,4 +7,5 @@ Feature: Create user
     Given I have a users name
         And I have a users id
     When I create a user
-    Then I receive a user object
+    Then I receive a HTTP 201 code
+        And I receive a user object
