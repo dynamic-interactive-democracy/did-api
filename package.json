@@ -1,5 +1,5 @@
 {
-  "name": "did-api",
+  "name": "@dynamic-interactive-democracy/did-api",
   "version": "0.1.0-alpha.1",
   "description": "",
   "main": "index.js",
