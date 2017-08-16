@@ -21,7 +21,7 @@ cucumber.defineSupportCode(function({ registerHandler }) {
 
             scenario.didApp = new DidApp(log, config);
             log.info("Starting server");
-            scenario.didApp.start(() => setInterval(callback, 100)); /* TODO annoying delay - i know
+            scenario.didApp.start(() => setTimeout(callback, 1000)); /* TODO annoying delay - i know
                 because table creation is done while starting the server
                 it could be fixed by emitting an event when all tables are created
             */
