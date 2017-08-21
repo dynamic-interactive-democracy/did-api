@@ -1,6 +1,6 @@
 {
   "name": "@dynamic-interactive-democracy/did-api",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -31,6 +31,7 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
-    "cucumber": "^2.3.1"
+    "cucumber": "^2.3.1",
+    "request": "^2.81.0"
   }
 }
