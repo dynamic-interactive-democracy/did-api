@@ -46,6 +46,20 @@ Will return:
 }
 ```
 
+#### get current user circles
+
+```
+GET /user/circles
+Authorization: Basic `base64(id:token)`
+```
+
+Will return the circles that the current user is a member of:
+
+```
+{
+    //TODO
+}
+
 ### Users
 
 Creating a user returns an auth token that can be used to act as the user in the system.
