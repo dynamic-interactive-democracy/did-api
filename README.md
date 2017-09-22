@@ -371,6 +371,7 @@ will result in:
     "roles": [
         {
             "id": {roleId},
+            "title": {string},
             "person": {userId},
             "effects": [
                 "notifiedOfUpcomingDeadlines",
