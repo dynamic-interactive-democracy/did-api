@@ -100,6 +100,3 @@ Feature: Manage roles
         And there should be no elections for the returned role
         And there should be no previous role owners for the returned role
         And there should be no evaluations for the returned role
-
-# TODO: adding evaluations, holding elections, changing an owner (remembering previous ones).
-# TODO: failing to override evaluations, elections and previous owner fields.
