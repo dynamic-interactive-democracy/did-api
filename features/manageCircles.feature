@@ -11,3 +11,6 @@ Feature: Manage circles
     Then I receive a HTTP 201 code
         And I receive a circle object
         And the name of the circle is "Cool Circle"
+
+#TODO: Standard procedure texts created
+#TODO: Standard roles creates
