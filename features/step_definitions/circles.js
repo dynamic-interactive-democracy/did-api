@@ -15,7 +15,16 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         callback();
     });
 
-    Given(/^I have a circle called "(.*)"$/, function(circleName, callback) {
+    Given(/^a circle, "([^"]+)"(, to which I belong)?$/, function(circleName, belongingToCircle, callback) {
+        if(belongingToCircle) {
+            return createCircle.call(this, circleName, callback);
+        }
+        else {
+            throw new Error("Not supported: creating circle to which I do not belong.");
+        }
+    });
+
+    function createCircle(circleName, callback) {
         request.post({
             url: `${this.url}/circles`,
             body: { name: circleName },
@@ -32,6 +41,10 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
 
             callback();
         });
+    }
+
+    Given(/^I have a circle called "(.*)"$/, function(circleName, callback) {
+        createCircle.call(this, circleName, callback);
     });
 
     When(/^I create the circle$/, function(callback) {
