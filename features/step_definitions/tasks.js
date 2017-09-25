@@ -61,9 +61,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
             data.title = taskName;
             return ensureTask.call(this, data, callback);
         }
-        else {
-            callback(null, 'pending');
-        }
+        callback(null, 'pending');
     });
 
     Then(/^I should receive a HTTP ([0-9]{3}) code response$/, function(responseCode, callback) {
