@@ -107,7 +107,7 @@ Feature: Elect person for role
         Then I should receive a HTTP 200 response with the following object as `role`:
         | title  | Bridge Builder |
         | roleId | bridge-builder |
-        And the role should contain an election
+        And the returned role should contain an election
         And the contained election should have the following data:
         | state   | completed                                         |
         | summary | We talked about it, and Jake is going to be prez. |

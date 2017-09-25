@@ -41,12 +41,13 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     When(/^I create a user$/, function(callback) {
+        createUser.call(this, { name: this.userName, userId: this.userId }, callback);
+    });
+
+    function createUser(data, callback) {
         request.post({
             url: `${this.url}/users`,
-            body: {
-                name: this.userName,
-                userId: this.userId
-            },
+            body: data,
             json: true
         }, (error, response, body) => {
             this.error = error;
@@ -55,7 +56,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
 
             callback();
         });
-    });
+    }
 
     Then(/^I receive a user object$/, function(callback) {
         if(this.error) return callback(this.error);
@@ -65,5 +66,13 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         assert.equal(this.body.user.name, this.userName);
 
         callback();
+    });
+
+    Given(/^a user "([^"]+)" exists$/, function(name, callback) {
+        this.users = this.users || [];
+        let userId = uuid.v4();
+        let data = { userId, name };
+        this.users.push(data);
+        createUser.call(this, data, callback);
     });
 });

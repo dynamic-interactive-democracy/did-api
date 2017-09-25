@@ -25,6 +25,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
             this.error = error;
             this.response = response;
             this.body = body;
+            this.role = (body && body.role) ? body.role : null;
 
             callback();
         });
@@ -240,14 +241,15 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     }
 
     Then(/^I should receive a HTTP ([0-9]{3}) response with the following object as `(.*)`:$/, function(responseCode, objectName, table, callback) {
-        if(this.response.statusCode != responseCode) {
-            return callback(new Error("Expected HTTP response code " + responseCode + " but got " + this.response.statusCode + ": " + JSON.stringify(this.body)));
-        }
-        if(!this.body || typeof this.body !== "object") {
-            return callback(new Error("No valid body was returned from the request"));
-        }
-        let obj = this.body[objectName];
-        let expectedObject = table.rowsHash();
+        assertObjectByName.call(this, responseCode, objectName, (error, obj) => {
+            if(error) {
+                return callback(error);
+            }
+            ensureObjectMatch.call(this, objectName, obj, table.rowsHash(), callback);
+        });
+    });
+
+    function ensureObjectMatch(objectName, obj, expectedObject, callback) {
         let mismatchKeys = Object.keys(expectedObject).filter(key => expectedObject[key] != obj[key]);
         if(mismatchKeys.length) {
             let mismatches = mismatchKeys.map(key => {
@@ -259,8 +261,23 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
             });
             return callback(new Error(`Expected object did not match actual object in \`${objectName}\`. Mismatches: ${JSON.stringify(mismatches, null, 2)}`));
         }
-        this.returned = { [objectName]: obj };
         callback();
+    }
+
+    function assertObjectByName(responseCode, objectName, callback) {
+        if(this.response.statusCode != responseCode) {
+            return callback(new Error("Expected HTTP response code " + responseCode + " but got " + this.response.statusCode + ": " + JSON.stringify(this.body)));
+        }
+        if(!this.body || typeof this.body !== "object") {
+            return callback(new Error("No valid body was returned from the request"));
+        }
+        let obj = this.body[objectName];
+        this.returned = { [objectName]: obj };
+        callback(null, obj);
+    }
+
+    Then(/^I should receive a HTTP ([0-9]{3}) response with an object as `(.*)`$/, function(responseCode, objectName, callback) {
+        assertObjectByName.call(this, responseCode, objectName, callback);
     });
 
     Then(/^the date of the evaluation should be today's date$/, function(callback) {
@@ -268,7 +285,11 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     function assertEquals(name, actual, expected, callback) {
-        if(expected !== actual) {
+        assertThis(name, expected !== actual, actual, expected, callback);
+    }
+
+    function assertThis(name, success, actual, expected, callback) {
+        if(success) {
             return callback(new Error(`Expected ${name} to be ${expected}, but found ${actual}.`));
         }
         callback();
@@ -300,5 +321,296 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
 
     // ELECTIONS
 
-    
+    When(/^I start an election for the following term:$/, function(table, callback) {
+        startElection.call(this, table.rowsHash(), callback);
+    });
+
+    function startElection(data, callback) {
+        request.post({
+            url: `${this.url}/circles/${this.circle.circleId}/roles/${this.role.roleId}/elections`,
+            auth: {
+                user: this.userId,
+                pass: this.token
+            },
+            body: data,
+            json: true
+        }, (error, response, body) => {
+            this.error = error;
+            this.response = response;
+            this.body = body;
+
+            callback();
+        });
+    }
+
+    Given(/^the role has an election for the following term:$/, function(table, callback) {
+        startElection.call(this, table.rowsHash(), callback);
+    });
+
+    Then(/^the term of the returned election should (start|end) on ([0-9\-]+)$/, function(key, date, callback) {
+        assertEquals(`term ${key}`, this.returned.election.term[key], date, callback);
+    });
+
+    Then(/^the returned election should have no nominations$/, function(callback) {
+        assertEmptyArray(`nominations`, this.returned.election.nominations, callback);
+    });
+
+    function assertEmptyArray(name, actual, callback) {
+        assertThis(name, Array.isArray(actual) && actual.length === 0, actual, "[]", callback);
+    }
+
+    Then(/^the returned election should have no (electee|summary)$/, function(field, callback) {
+        assertEquals(field, this.returned.election[field], null, callback);
+    });
+
+    When(/^I make a nomination for "([^"]+)"$/, function(name, callback) {
+        makeNominationByName.call(this, name, callback);
+    });
+
+    function makeNominationByName(name, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            makeNomination.call(this, { nominee: user.userId }, callback);
+        });
+    }
+
+    function findUser(name, callback) {
+        let user = this.users.find((user) => user.name == name);
+        if(!user) {
+            return callback(new Error(`No user with name ${name} found`));
+        }
+        callback(null, user);
+    }
+
+    function makeNomination(data, callback) {
+        request.post({
+            url: `${this.url}/circles/${this.circle.circleId}/roles/${this.role.roleId}/elections/nominations`,
+            auth: {
+                user: this.userId,
+                pass: this.token
+            },
+            body: data,
+            json: true
+        }, (error, response, body) => {
+            this.error = error;
+            this.response = response;
+            this.body = body;
+
+            callback();
+        });
+    }
+
+    Then(/^the nominator of the returned nomination should be me$/, function(callback) {
+        assertEquals("nominator", this.returned.nomination.nominator, this.userId, callback);
+    });
+
+    Then(/^the nominee of the returned nomination should be "([^"]+)"$/, function(name, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            assertEquals("nominee", this.returned.nomination.nominee, user.userId, callback);
+        });
+    });
+
+    Then(/^there should be no change round nominee on the returned nomination$/, function(callback) {
+        assertEquals("change round nominee", this.returned.nomination.changeRoundNominee, null, callback);
+    });
+
+    Given(/^I have made a nomination for "([^"]+)"$/, function(name, callback) {
+         makeNominationByName.call(this, name, callback);
+    });
+
+    When(/^I move the election to the change round$/, function(callback) {
+        updateElection.call(this, { state: "secondRound" }, callback);
+    });
+
+    function updateElection(data, callback) {
+        request.put({
+            url: `${this.url}/circles/${this.circle.circleId}/roles/${this.role.roleId}/elections`,
+            auth: {
+                user: this.userId,
+                pass: this.token
+            },
+            body: data,
+            json: true
+        }, (error, response, body) => {
+            this.error = error;
+            this.response = response;
+            this.body = body;
+
+            callback();
+        });
+    }
+
+    Then(/^the returned election should contain a nomination of "([^"]+)" by me and with no change round nominee$/, function(name, callback) {
+        let nomination = this.returned.election.nominations[0];
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            assertEquals("nominee", nomination.nominee, user.userId, (error) => {
+                if(error) {
+                    return callback(error);
+                }
+                assertEquals("nominator", nomination.nominator, this.userId, (error) => {
+                    if(error) {
+                        return callback(error);
+                    }
+                    assertEquals("change round nominee", nomination.changeRoundNominee, null, callback);
+                });
+            });
+        });
+    });
+
+    Given(/^I have moved the election to the change round$/, function(callback) {
+        updateElection.call(this, { state: "secondRound" }, callback);
+    });
+
+    When(/^I make a change round nomination for "([^"]+)"$/, function(name, callback) {
+        makeChangeRoundNominationByName.call(this, name, callback);
+    });
+
+    function makeChangeRoundNominationByName(name, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            updateNomination.call(this, { changeRoundNominee: user.userId }, callback);
+        });
+    }
+
+    function updateNomination(data, callback) {
+        request.put({
+            url: `${this.url}/circles/${this.circle.circleId}/roles/${this.role.roleId}/elections/nominations`,
+            auth: {
+                user: this.userId,
+                pass: this.token
+            },
+            body: data,
+            json: true
+        }, (error, response, body) => {
+            this.error = error;
+            this.response = response;
+            this.body = body;
+
+            callback();
+        });
+    }
+
+    Then(/^the change round nominee of the returned nomination should be "([^"]+)"$/, function(name, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            assertEquals("change round nominee", this.returned.nomination.changeRoundNominee, user.userId, callback);
+        });
+    });
+
+    Given(/^I have made a change round nomination for "([^"]+)"$/, function(name, callback) {
+        makeChangeRoundNominationByName.call(this, name, callback);
+    });
+
+    When(/^I complete the election with "([^"]+)" as electee and the following data:$/, function(name, table, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            let data = table.rowsHash();
+            data.electee = user.userId;
+            updateElection.call(this, data, callback);
+        });
+    });
+
+    Then(/^the returned election should have "([^"]+)" as electee$/, function(name, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            assertEquals("electee", this.returned.election.electee, user.userId, callback);
+        });
+    });
+
+    Then(/^the returned election should contain a nomination of "([^"]+)" by me and with "([^"]+)" as change round nominee$/, function(name1, name2, callback) {
+        findUser.call(this, name1, (error, user1) => {
+            if(error) {
+                return callback(error);
+            }
+            findUser.call(this, name2, (error, user2) => {
+                if(error) {
+                    return callback(error);
+                }
+                assertEquals("nominee", nomination.nominee, user1.userId, (error) => {
+                    if(error) {
+                        return callback(error);
+                    }
+                    assertEquals("nominator", nomination.nominator, this.userId, (error) => {
+                        if(error) {
+                            return callback(error);
+                        }
+                        assertEquals("change round nominee", nomination.changeRoundNominee, user2.userId, callback);
+                    });
+                });
+            });
+        });
+    });
+
+    Given(/^I have completed the election with "([^"]+)" as electee and the following data:$/, function(name, table, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            let data = table.rowsHash();
+            data.electee = user.userId;
+            updateElection.call(this, data, callback);
+        });
+    });
+
+    Then(/^the returned role should contain an election$/, function(callback) {
+        this.contained = { election: this.returned.role.elections[0] };
+        assertEquals("number of elections", this.returned.role.elections.length, 1, callback);
+    });
+
+    Then(/^the contained election should have the following data:$/, function(table, callback) {
+        ensureObjectMatch.call(this, "contained.election", this.contained.election, table.rowsHash(), callback);
+    });
+
+    Then(/^the term of the contained election should (start|end) on ([0-9\-]+)$/, function(key, date, callback) {
+        assertEquals(`term ${key}`, this.contained.election.term[key], date, callback);
+    });
+
+    Then(/^the contained election should have "([^"]+)" as electee$/, function(name, callback) {
+        findUser.call(this, name, (error, user) => {
+            if(error) {
+                return callback(error);
+            }
+            assertEquals("electee", this.contained.election.electee, user.userId, callback);
+        });
+    });
+
+    Then(/^the contained election should contain a nomination of "([^"]+)" by me and with "([^"]+)" as change round nominee$/, function(name1, name2, callback) {
+        findUser.call(this, name1, (error, user1) => {
+            if(error) {
+                return callback(error);
+            }
+            findUser.call(this, name2, (error, user2) => {
+                if(error) {
+                    return callback(error);
+                }
+                assertEquals("nominee", nomination.nominee, user1.userId, (error) => {
+                    if(error) {
+                        return callback(error);
+                    }
+                    assertEquals("nominator", nomination.nominator, this.userId, (error) => {
+                        if(error) {
+                            return callback(error);
+                        }
+                        assertEquals("change round nominee", nomination.changeRoundNominee, user2.userId, callback);
+                    });
+                });
+            });
+        });
+    });
 });
