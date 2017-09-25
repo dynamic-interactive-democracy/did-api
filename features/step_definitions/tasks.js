@@ -61,9 +61,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
             data.title = taskName;
             return ensureTask.call(this, data, callback);
         }
-        else {
-            callback(null, 'pending');
-        }
+        callback(null, 'pending');
     });
 
     Then(/^I should receive a HTTP ([0-9]{3}) code response$/, function(responseCode, callback) {
@@ -161,7 +159,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         if(this.response.statusCode != responseCode) {
             return callback(new Error("Expected HTTP response code " + responseCode + " but got " + this.response.statusCode + ": " + this.body));
         }
-        let mismatchingTasks = table.hashes().filter(expectedTask => taskHasNoMatches(expectedTask, this.body.tasks));
+        let mismatchingTasks = table.hashes().filter((expectedTask) => taskHasNoMatches(expectedTask, this.body.tasks));
         if(mismatchingTasks.length) {
             return callback(new Error("Actual tasks returned did not match expectation. " + JSON.stringify({ expected: mismatchingTasks, actual: this.body.tasks }, null, 2)));
         }
@@ -169,7 +167,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     function taskHasNoMatches(expectedTask, actualTasks) {
-        return !actualTasks.find(actualTask => Object.keys(expectedTask).every(key => expectedTask[key] == actualTask[key]));
+        return !actualTasks.find((actualTask) => Object.keys(expectedTask).every(key => expectedTask[key] == actualTask[key]));
     }
 
     When(/^I delete the task with ID "([^"]+)"$/, function(taskId, callback) {
@@ -194,7 +192,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
             if(error) {
                 return callback(error);
             }
-            let matchingTask = this.body.tasks.find(task => task.taskId == taskId);
+            let matchingTask = this.body.tasks.find((task) => task.taskId == taskId);
             if(matchingTask) {
                 return callback(new Error("Expected to find no task with matching task ID " + taskId + " but found " + JSON.stringify(matchingTask, null, 2)));
             }
