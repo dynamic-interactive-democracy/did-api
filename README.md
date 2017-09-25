@@ -398,9 +398,9 @@ will result in:
             },
             "areaOfResponsibility": {string},
             "desiredCharacteristics": {string},
-            "previousRoleOwners": [
+            "roleOwners": [
                 {
-                    "id": {id},
+                    "userId": {userId},
                     "term": {
                         "start": {termStartDate},
                         "end": {termEndDate}

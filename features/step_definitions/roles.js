@@ -53,6 +53,10 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         callback();
     });
 
+    Then(/^there should be ([0-9]+) role owners? for the returned role$/, function(numRoleOwners, callback) {
+        assertEquals("number of role owners", this.returned.role.roleOwners.length, parseInt(numRoleOwners), callback);
+    });
+
     Then(/^there should be no evaluations for the returned role$/, function(callback) {
         let { evaluations } = this.returned.role;
         if(!Array.isArray(evaluations) || evaluations.length > 0) {
@@ -80,11 +84,26 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         createRole.call(this, { title: roleName }, callback);
     });
 
+    Then(/^the term on the returned role should start today, and have no specified end date$/, function(callback) {
+        let { term } = this.returned.role;
+        if(!term) {
+            return callback(new Error(`Expected a term, but found ${JSON.stringify(term)}`));
+        }
+        let today = (new Date()).toISOString().substring(0, 10);
+        if(term.start != today) {
+            return callback(new Error(`Expected start date ${today}, but found ${term.start}`));
+        }
+        if(term.end != null) {
+            return callback(new Error(`Expected no end date, but found ${term.end}`));
+        }
+        callback();
+    });
+
     Then(/^there should be no term for the returned role$/, function(callback) {
         if(this.returned.role.term == null) {
             return callback();
         }
-        callback(new Error("Expected to term, but found " + this.returned.role.term));
+        callback(new Error("Expected no term, but found " + JSON.stringify(this.returned.role.term)));
     });
 
     Then(/^there should be no area of responsibility for the returned role$/, function(callback) {
@@ -234,7 +253,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
             let mismatches = mismatchKeys.map(key => {
                 return {
                     key,
-                    expected: expectedRole[key],
+                    expected: expectedObject[key],
                     actual: obj[key] || null
                 };
             });

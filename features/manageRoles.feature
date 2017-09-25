@@ -7,18 +7,17 @@ Feature: Manage roles
         Given I have a users token
         And a circle, "Cool Circle", to which I belong
         When I create a role "Poker Card Dealer" for myself with the following data:
-        | term                   | { "start": "2017-01-01", "end": "2030-12-31" }                     |
         | areaOfResponsibility   | Deal the poker cards                                               |
         | desiredCharacteristics | A swift hand, low tendency to pack the deck to anyone's advantage. |
         Then I should receive a HTTP 201 response with the following object as `role`:
         | title                  | Poker Card Dealer                                                  |
         | roleId                 | poker-card-dealer                                                  |
-        | term                   | { "start": "2017-01-01", "end": "2030-12-31" }                     |
         | areaOfResponsibility   | Deal the poker cards                                               |
         | desiredCharacteristics | A swift hand, low tendency to pack the deck to anyone's advantage. |
+        And the term on the returned role should start today, and have no specified end date
         And I should be the person with the returned role
         And there should be no elections for the returned role
-        And there should be no previous role owners for the returned role
+        And there should be 1 role owner for the returned role
         And there should be no evaluations for the returned role
 
     Scenario: Creating a role with an identical name to an existing role
@@ -30,30 +29,29 @@ Feature: Manage roles
         | title       | Boombox Player   |
         | roleId      | boombox-player-1 |
         And I should be the person with the returned role
-        And there should be no term for the returned role
+        And the term on the returned role should start today, and have no specified end date
         And there should be no area of responsibility for the returned role
         And there should be no desired characteristics for the returned role
         And there should be no elections for the returned role
-        And there should be no previous role owners for the returned role
+        And there should be 1 role owner for the returned role
         And there should be no evaluations for the returned role
 
     Scenario: Retrieving a role
         Given I have a users token
         And a circle, "Cool Circle", to which I belong
         And the circle has a role "Bridge Builder", which I have, with the following data:
-        | term                   | { "start": "2017-01-01", "end": "2030-12-31" }                     |
         | areaOfResponsibility   | Deal the poker cards                                               |
         | desiredCharacteristics | A swift hand, low tendency to pack the deck to anyone's advantage. |
         When I request the role with ID "bridge-builder"
         Then I should receive a HTTP 200 response with the following object as `role`:
         | title                  | Bridge Builder                                                     |
         | roleId                 | bridge-builder                                                     |
-        | term                   | { "start": "2017-01-01", "end": "2030-12-31" }                     |
         | areaOfResponsibility   | Deal the poker cards                                               |
         | desiredCharacteristics | A swift hand, low tendency to pack the deck to anyone's advantage. |
+        And the term on the returned role should start today, and have no specified end date
         And I should be the person with the returned role
         And there should be no elections for the returned role
-        And there should be no previous role owners for the returned role
+        And there should be 1 role owner for the returned role
         And there should be no evaluations for the returned role
 
     Scenario: Retrieving a non-existing role
@@ -87,16 +85,15 @@ Feature: Manage roles
         And the circle has a role "Bridge Builder", which I have
         When I update the role with ID "bridge-builder" with the following data:
         | title                  | Tunnel Digger                                  |
-        | term                   | { "start": "2017-01-01", "end": "2030-12-31" } |
         | areaOfResponsibility   | Dig tunnels                                    |
         | desiredCharacteristics | Gruff voices appreciated.                      |
         Then I should receive a HTTP 200 response with the following object as `role`:
         | title                  | Tunnel Digger                                  |
         | roleId                 | bridge-builder                                 |
-        | term                   | { "start": "2017-01-01", "end": "2030-12-31" } |
         | areaOfResponsibility   | Dig tunnels                                    |
         | desiredCharacteristics | Gruff voices appreciated.                      |
+        And the term on the returned role should start today, and have no specified end date
         And I should be the person with the returned role
         And there should be no elections for the returned role
-        And there should be no previous role owners for the returned role
+        And there should be 1 role owner for the returned role
         And there should be no evaluations for the returned role
