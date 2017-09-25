@@ -11,7 +11,7 @@ Feature: Evaluate role
         | content | Good bridges. Well done, buddy. Keep building 'em. |
         Then I should receive a HTTP 201 response with the following object as `evaluation`:
         | content | Good bridges. Well done, buddy. Keep building 'em. |
-        And the date of the evaluation should be today's date.
+        And the date of the evaluation should be today's date
 
     Scenario: See previous evaluations
         Given I have a users token
@@ -22,7 +22,7 @@ Feature: Evaluate role
         And an evaluation has been given to the role with ID "bridge-builder" with the following data:
         | content | The bridges are alright, but the attitude with which they are built could be better. |
         When I request the role with ID "bridge-builder"
-        Then I should receive a HTTP 200 code response with the following role object as `role`:
+        Then I should receive a HTTP 200 response with the following object as `role`:
         | title                  | Bridge Builder                                                     |
         | roleId                 | bridge-builder                                                     |
         And there should be 2 evaluations on the returned role

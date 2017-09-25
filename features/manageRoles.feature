@@ -10,7 +10,7 @@ Feature: Manage roles
         | term                   | { "start": "2017-01-01", "end": "2030-12-31" }                     |
         | areaOfResponsibility   | Deal the poker cards                                               |
         | desiredCharacteristics | A swift hand, low tendency to pack the deck to anyone's advantage. |
-        Then I should receive a HTTP 201 code response with the following role object as `role`:
+        Then I should receive a HTTP 201 response with the following object as `role`:
         | title                  | Poker Card Dealer                                                  |
         | roleId                 | poker-card-dealer                                                  |
         | term                   | { "start": "2017-01-01", "end": "2030-12-31" }                     |
@@ -26,7 +26,7 @@ Feature: Manage roles
         And a circle, "Cool Circle", to which I belong
         And the circle has a role "Boombox Player"
         When I create a role "Boombox Player" for myself
-        Then I should receive a HTTP 201 code response with the following role object as `role`:
+        Then I should receive a HTTP 201 response with the following object as `role`:
         | title       | Boombox Player   |
         | roleId      | boombox-player-1 |
         And I should be the person with the returned role
@@ -45,7 +45,7 @@ Feature: Manage roles
         | areaOfResponsibility   | Deal the poker cards                                               |
         | desiredCharacteristics | A swift hand, low tendency to pack the deck to anyone's advantage. |
         When I request the role with ID "bridge-builder"
-        Then I should receive a HTTP 200 code response with the following role object as `role`:
+        Then I should receive a HTTP 200 response with the following object as `role`:
         | title                  | Bridge Builder                                                     |
         | roleId                 | bridge-builder                                                     |
         | term                   | { "start": "2017-01-01", "end": "2030-12-31" }                     |
@@ -90,7 +90,7 @@ Feature: Manage roles
         | term                   | { "start": "2017-01-01", "end": "2030-12-31" } |
         | areaOfResponsibility   | Dig tunnels                                    |
         | desiredCharacteristics | Gruff voices appreciated.                      |
-        Then I should receive a HTTP 200 code response with the following role object as `role`:
+        Then I should receive a HTTP 200 response with the following object as `role`:
         | title                  | Tunnel Digger                                  |
         | roleId                 | bridge-builder                                 |
         | term                   | { "start": "2017-01-01", "end": "2030-12-31" } |

@@ -30,43 +30,15 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         });
     }
 
-    Then(/^I should receive a HTTP ([0-9]{3}) code response with the following role object as `role`:$/, function(responseCode, table, callback) {
-        assertRoleObjectResponse.call(this, responseCode, body => body.role, table, callback);
-    });
-
-    function assertRoleObjectResponse(responseCode, roleSelector, table, callback) {
-        if(this.response.statusCode != responseCode) {
-            return callback(new Error("Expected HTTP response code " + responseCode + " but got " + this.response.statusCode + ": " + JSON.stringify(this.body)));
-        }
-        if(!this.body || typeof this.body !== "object") {
-            return callback(new Error("No valid body was returned from the request"));
-        }
-        let role = roleSelector(this.body);
-        let expectedRole = table.rowsHash();
-        let mismatchKeys = Object.keys(expectedRole).filter(key => expectedRole[key] != role[key]);
-        if(mismatchKeys.length) {
-            let mismatches = mismatchKeys.map(key => {
-                return {
-                    key,
-                    expected: expectedRole[key],
-                    actual: role[key] || null
-                };
-            });
-            return callback(new Error("Expected role did not match actual role. Mismatches: " + JSON.stringify(mismatches, null, 2)));
-        }
-        this.returnedRole = role;
-        callback();
-    }
-
     Then(/^I should be the person with the returned role$/, function(callback) {
-        if(this.returnedRole.person == this.userId) {
+        if(this.returned.role.person == this.userId) {
             return callback();
         }
-        callback(new Error(`Returned role is owned by ${this.returnedRole.person}. Expected it to be owned my be (${this.userId}).`));
+        callback(new Error(`Returned role is owned by ${this.returned.role.person}. Expected it to be owned my be (${this.userId}).`));
     });
 
     Then(/^there should be no elections for the returned role$/, function(callback) {
-        let { elections } = this.returnedRole;
+        let { elections } = this.returned.role;
         if(!Array.isArray(elections) || elections.length > 0) {
             return callback(new Error("Expected no elections, but found: " + JSON.stringify(elections)));
         }
@@ -74,7 +46,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     Then(/^there should be no previous role owners for the returned role$/, function(callback) {
-        let { previousRoleOwners } = this.returnedRole;
+        let { previousRoleOwners } = this.returned.role;
         if(!Array.isArray(previousRoleOwners) || previousRoleOwners.length > 0) {
             return callback(new Error("Expected no previous owners, but found: " + JSON.stringify(previousRoleOwners)));
         }
@@ -82,7 +54,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     Then(/^there should be no evaluations for the returned role$/, function(callback) {
-        let { evaluations } = this.returnedRole;
+        let { evaluations } = this.returned.role;
         if(!Array.isArray(evaluations) || evaluations.length > 0) {
             return callback(new Error("Expected no previous owners, but found: " + JSON.stringify(evaluations)));
         }
@@ -109,24 +81,24 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     Then(/^there should be no term for the returned role$/, function(callback) {
-        if(this.returnedRole.term == null) {
+        if(this.returned.role.term == null) {
             return callback();
         }
-        callback(new Error("Expected to term, but found " + this.returnedRole.term));
+        callback(new Error("Expected to term, but found " + this.returned.role.term));
     });
 
     Then(/^there should be no area of responsibility for the returned role$/, function(callback) {
-        if(this.returnedRole.areaOfResponsibility == "") {
+        if(this.returned.role.areaOfResponsibility == "") {
             return callback();
         }
-        callback(new Error("Expected no area of responsibility, but found " + this.returnedRole.areaOfResponsibility));
+        callback(new Error("Expected no area of responsibility, but found " + this.returned.role.areaOfResponsibility));
     });
 
     Then(/^there should be no desired characteristics for the returned role$/, function(callback) {
-        if(this.returnedRole.desiredCharacteristics == "") {
+        if(this.returned.role.desiredCharacteristics == "") {
             return callback();
         }
-        callback(new Error("Expected no desired characteristics, but found " + this.returnedRole.desiredCharacteristics));
+        callback(new Error("Expected no desired characteristics, but found " + this.returned.role.desiredCharacteristics));
     });
 
     When(/^I request the role with ID "([^"]+)"$/, function(roleId, callback) {
@@ -222,5 +194,88 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
 
             callback();
         });
+    });
+
+    // EVALUATIONS
+
+    When(/^I evaluate the role with ID "([^"]+)" with the following data:$/, function(roleId, table, callback) {
+        createEvaluation.call(this, roleId, table.rowsHash(), callback);
+    });
+
+    function createEvaluation(roleId, data, callback) {
+        request.post({
+            url: `${this.url}/circles/${this.circle.circleId}/roles/${roleId}/evaluations`,
+            auth: {
+                user: this.userId,
+                pass: this.token
+            },
+            body: data,
+            json: true
+        }, (error, response, body) => {
+            this.error = error;
+            this.response = response;
+            this.body = body;
+
+            callback();
+        });
+    }
+
+    Then(/^I should receive a HTTP ([0-9]{3}) response with the following object as `(.*)`:$/, function(responseCode, objectName, table, callback) {
+        if(this.response.statusCode != responseCode) {
+            return callback(new Error("Expected HTTP response code " + responseCode + " but got " + this.response.statusCode + ": " + JSON.stringify(this.body)));
+        }
+        if(!this.body || typeof this.body !== "object") {
+            return callback(new Error("No valid body was returned from the request"));
+        }
+        let obj = this.body[objectName];
+        let expectedObject = table.rowsHash();
+        let mismatchKeys = Object.keys(expectedObject).filter(key => expectedObject[key] != obj[key]);
+        if(mismatchKeys.length) {
+            let mismatches = mismatchKeys.map(key => {
+                return {
+                    key,
+                    expected: expectedRole[key],
+                    actual: obj[key] || null
+                };
+            });
+            return callback(new Error(`Expected object did not match actual object in \`${objectName}\`. Mismatches: ${JSON.stringify(mismatches, null, 2)}`));
+        }
+        this.returned = { [objectName]: obj };
+        callback();
+    });
+
+    Then(/^the date of the evaluation should be today's date$/, function(callback) {
+        assertEquals("evaluation date", this.returned.evaluation.date, (new Date()).toISOString().substring(0, 10), callback);
+    });
+
+    function assertEquals(name, actual, expected, callback) {
+        if(expected !== actual) {
+            return callback(new Error(`Expected ${name} to be ${expected}, but found ${actual}.`));
+        }
+        callback();
+    }
+
+    Given(/^an evaluation has been given to the role with ID "([^"]+)" with the following data:$/, function(roleId, table, callback) {
+        createEvaluation.call(this, roleId, table.rowsHash(), callback);
+    });
+
+    Then(/^there should be ([0-9]+) evaluations on the returned role$/, function(numEvaluations, callback) {
+        assertEquals("number of evaluations", this.returned.role.evaluations.length, parseInt(numEvaluations), callback);
+    });
+
+    Then(/^the following evaluations should exist on the returned role:$/, function(table, callback) {
+        let expectedEvaluations = table.hashes();
+        let evaluations = this.returned.role.evaluations;
+
+        let allEvaluationsFound = expectedEvaluations.every(expectedEvaluation =>
+            evaluations.some(evaluation =>
+                Object.keys(expectedEvaluation).every(key => expectedEvaluation[key] == evaluation[key])
+            )
+        );
+
+        if(!allEvaluationsFound) {
+            return callback(new Error(`Did not find all expected evaluations. Expected ${JSON.stringify(expectedEvaluations)}, but found ${JSON.stringify(evaluations)}.`));
+        }
+        callback();
     });
 });
