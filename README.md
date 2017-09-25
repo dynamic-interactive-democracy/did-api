@@ -427,6 +427,7 @@ will result in:
                     ],
                     "electee": {userId},
                     "summary": {string},
+                    "state": {enum:firstRound|secondRound|completed},
                     "term": {
                         "start": {termStartDate},
                         "end": {termEndDate}
@@ -450,9 +451,7 @@ Todo: Request evaluation of role.
 Todo: Submit evaluation
 
 Todo: Start/finish election.
-Current person is updated once the next term starts.
-**OR** maybe we don't need to show the current `person` at all?
-It is a derived field (from `elections`).
+Current person is updated once the next term starts. (shortcutted!)
 
 ### create (TODO)
 
