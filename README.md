@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dynamic-interactive-democracy/did-api.svg?branch=master)](https://travis-ci.org/dynamic-interactive-democracy/did-api)
+
 # did-api PRIO TODO
 
 1. Circles in API
