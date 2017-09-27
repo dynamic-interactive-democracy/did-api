@@ -2,7 +2,7 @@ sudo: required
 
 language: node_js
 node_js:
-  - node
+    - node
 
 services:
     - docker
@@ -18,3 +18,7 @@ before_install:
 install: npm install
 
 script: npm test
+
+notifications:
+  slack:
+    secure: l5gt7N4FCAAr0ATKMIZDSkczNeS+rXwTjrI36K0gC6DwnhXboH416WFSOXaX9GSMdRR3Kr5LU9wPDc7FWfZKnV/Srx1ib07DCAm9KD2sDACZzKgQ/B2OCaR4/UpV8j0r8APUwSNEEaYS0053jBpdy/QX/pEeRt5c0fB3n3WrptxG3VyiAXm/NJ10N3P58oXdGclrn3uUd/XTtArZjAfUp4c3gp77cUDu9Q+LLs4O/V3lOUvh27tvQ91nyv1Kz0cc3oWnLSN1SpyNIKpUSsv9W1nXNjiFUT3yW3WMzIe+3aGCwlFRKcVtLEr8gKTooLPjEFVnGuNPT17D4+pva/b9C1R472C0e6iDcmqbVmgPkBfgl1NALbSJtFtG/2U4mSewirs86ZOi6ePH/zTKTAlIMKO6DpoJTlpRWWNtccOH0n/prfnI/59iSJCHavoB7SwHAtC/BKz2/cDRDxXVPG3gkO1p/qFSpd6LNY4TSfcK0Lb8WS4b/AQQtGdObzass+1rZMk8nQtv1Vz4ogr6YQ8RrFKhpQOhoLKq3iYrXVWT6U3cpvPPWfBe/8kOjwl3wY2NHC/i+MODuAH1Zf1CJoANfWtn6KeGbTy1OLUCtWHwTEJW/QRbhA59OFVg4DaRLb2omSbkj8+y3OyZu+U8s0ypBvbxlGpfjx9G7YI9vPZN8/U=
