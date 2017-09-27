@@ -8,8 +8,12 @@ services:
     - docker
 
 before_install:
-- docker pull postgres:9.6.5
-- docker run -d -p 127.0.0.1:5432:5432 postgres:9.6.5
+    - docker pull postgres:9.6.5
+
+    - sudo service postgresql stop
+    - while sudo lsof -Pi :5432 -sTCP:LISTEN -t; do sleep 1; done # wait for postgresql to shutdown
+
+    - docker run -d -p 127.0.0.1:5432:5432 postgres:9.6.5
 
 install: npm install
 
