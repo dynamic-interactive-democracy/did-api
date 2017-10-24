@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/dynamic-interactive-democracy/did-api.git"
   },
-  "author": "did dev team",
+  "author": "deranged <get@deranged.dk>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/dynamic-interactive-democracy/did-api/issues"
