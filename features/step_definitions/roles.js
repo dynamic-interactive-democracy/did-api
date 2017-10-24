@@ -285,11 +285,11 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     function assertEquals(name, actual, expected, callback) {
-        assertThis(name, expected !== actual, actual, expected, callback);
+        assertThis(name, expected === actual, actual, expected, callback);
     }
 
     function assertThis(name, success, actual, expected, callback) {
-        if(success) {
+        if(!success) {
             return callback(new Error(`Expected ${name} to be ${expected}, but found ${actual}.`));
         }
         callback();
@@ -343,6 +343,10 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         });
     }
 
+    Given(/^I have started an election for the following term:$/, function(table, callback) {
+        startElection.call(this, table.rowsHash(), callback);
+    });
+
     Given(/^the role has an election for the following term:$/, function(table, callback) {
         startElection.call(this, table.rowsHash(), callback);
     });
@@ -356,23 +360,38 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
     });
 
     function assertEmptyArray(name, actual, callback) {
-        assertThis(name, Array.isArray(actual) && actual.length === 0, actual, "[]", callback);
+        assertThis(name, Array.isArray(actual) && actual.length == 0, actual, "[]", callback);
     }
 
     Then(/^the returned election should have no (electee|summary)$/, function(field, callback) {
         assertEquals(field, this.returned.election[field], null, callback);
     });
 
-    When(/^I make a nomination for "([^"]+)"$/, function(name, callback) {
-        makeNominationByName.call(this, name, callback);
+    Then(/^the returned election should have no completion date$/, function(callback) {
+        assertEquals("completedAt", this.returned.election.completedAt, null, callback);
     });
 
-    function makeNominationByName(name, callback) {
+    Then(/^I should receive a HTTP ([0-9]+) response$/, function(responseCode, callback) {
+        if(this.response.statusCode != responseCode) {
+            return callback(new Error("Expected HTTP response code " + responseCode + " but got " + this.response.statusCode + ": " + JSON.stringify(this.body)));
+        }
+        callback();
+    });
+
+    When(/^I make a nomination with nominee "([^"]+)"$/, function(name, callback) {
+        makeNominationByName.call(this, name, "nominee", callback);
+    });
+
+    When(/^I make a nomination with change round nominee "([^"]+)"$/, function(name, callback) {
+        makeNominationByName.call(this, name, "changeRoundNominee", callback);
+    });
+
+    function makeNominationByName(name, fieldName, callback) {
         findUser.call(this, name, (error, user) => {
             if(error) {
                 return callback(error);
             }
-            makeNomination.call(this, { nominee: user.userId }, callback);
+            makeNomination.call(this, { [fieldName]: user.userId }, callback);
         });
     }
 
@@ -415,12 +434,16 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         });
     });
 
+    Then(/^there should be no nominee on the returned nomination$/, function(callback) {
+        assertEquals("nominee", this.returned.nomination.nominee, null, callback);
+    });
+
     Then(/^there should be no change round nominee on the returned nomination$/, function(callback) {
         assertEquals("change round nominee", this.returned.nomination.changeRoundNominee, null, callback);
     });
 
-    Given(/^I have made a nomination for "([^"]+)"$/, function(name, callback) {
-         makeNominationByName.call(this, name, callback);
+    Given(/^I have made a nomination with nominee "([^"]+)"$/, function(name, callback) {
+         makeNominationByName.call(this, name, "nominee", callback);
     });
 
     When(/^I move the election to the change round$/, function(callback) {
@@ -469,16 +492,24 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
         updateElection.call(this, { state: "secondRound" }, callback);
     });
 
-    When(/^I make a change round nomination for "([^"]+)"$/, function(name, callback) {
-        makeChangeRoundNominationByName.call(this, name, callback);
+    When(/^I update my nomination with nominee "([^"]+)"$/, function(name, callback) {
+        updateNominationByName.call(this, name, "nominee", callback);
     });
 
-    function makeChangeRoundNominationByName(name, callback) {
+    When(/^I update my nomination with change round nominee "([^"]+)"$/, function(name, callback) {
+        updateNominationByName.call(this, name, "changeRoundNominee", callback);
+    });
+
+    Given(/^I have updated my nomination with change round nominee "([^"]+)"$/, function(name, callback) {
+        updateNominationByName.call(this, name, "changeRoundNominee", callback);
+    });
+
+    function updateNominationByName(name, fieldName, callback) {
         findUser.call(this, name, (error, user) => {
             if(error) {
                 return callback(error);
             }
-            updateNomination.call(this, { changeRoundNominee: user.userId }, callback);
+            updateNomination.call(this, { [fieldName]: user.userId }, callback);
         });
     }
 
@@ -520,6 +551,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
             }
             let data = table.rowsHash();
             data.electee = user.userId;
+            data.state = "completed";
             updateElection.call(this, data, callback);
         });
     });
@@ -542,16 +574,15 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
                 if(error) {
                     return callback(error);
                 }
+                let nomination = this.returned.election.nominations.find((nomination) => nomination.nominator == this.userId);
+                if(!nomination) {
+                    return callback("No nomination by me in nominations: " + JSON.stringify(this.returned.election.nominations));
+                }
                 assertEquals("nominee", nomination.nominee, user1.userId, (error) => {
                     if(error) {
                         return callback(error);
                     }
-                    assertEquals("nominator", nomination.nominator, this.userId, (error) => {
-                        if(error) {
-                            return callback(error);
-                        }
-                        assertEquals("change round nominee", nomination.changeRoundNominee, user2.userId, callback);
-                    });
+                    assertEquals("change round nominee", nomination.changeRoundNominee, user2.userId, callback);
                 });
             });
         });
@@ -563,6 +594,7 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
                 return callback(error);
             }
             let data = table.rowsHash();
+            data.state = "completed";
             data.electee = user.userId;
             updateElection.call(this, data, callback);
         });
@@ -599,18 +631,28 @@ cucumber.defineSupportCode(function({ Given, When, Then }) {
                 if(error) {
                     return callback(error);
                 }
+                let nomination = this.contained.election.nominations.find((nomination) => nomination.nominator == this.userId);
+                if(!nomination) {
+                    return callback("No nomination by me in nominations: " + JSON.stringify(this.returned.election.nominations));
+                }
                 assertEquals("nominee", nomination.nominee, user1.userId, (error) => {
                     if(error) {
                         return callback(error);
                     }
-                    assertEquals("nominator", nomination.nominator, this.userId, (error) => {
-                        if(error) {
-                            return callback(error);
-                        }
-                        assertEquals("change round nominee", nomination.changeRoundNominee, user2.userId, callback);
-                    });
+                    assertEquals("change round nominee", nomination.changeRoundNominee, user2.userId, callback);
                 });
             });
         });
+    });
+
+    Then(/^the (returned|contained) election should have today's date as its completion date$/, function(containmentType, callback) {
+        assertEquals("completion date", this[containmentType].election.completedAt.substring(0,10), (new Date()).toISOString().substring(0, 10), callback);
+    });
+
+    Then(/^the (returned|contained) election should have a fully qualified datetime as its completion date$/, function(containmentType, callback) {
+        if(!/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]+(\.[0-9]+)?Z$/.test(this[containmentType].election.completedAt)) {
+            return callback(new Error(`Completion date (${this[containmentType].election.completedAt}) does not match expected pattern`));
+        }
+        callback();
     });
 });
