@@ -428,6 +428,7 @@ will result in:
                     "electee": {userId},
                     "summary": {string},
                     "state": {enum:firstRound|secondRound|completed},
+                    "completedAt": {completedOnDate},
                     "term": {
                         "start": {termStartDate},
                         "end": {termEndDate}
